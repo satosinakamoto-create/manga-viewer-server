@@ -1,0 +1,825 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+}
+
+/* ビュー管理 */
+.view {
+    display: none;
+    min-height: 100vh;
+}
+
+.view.active {
+    display: block;
+}
+
+/* ヘッダー */
+header {
+    background: white;
+    padding: 20px 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* 検索コンテナ */
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 40px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#search-input {
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s;
+    background: white;
+}
+
+#search-input:focus {
+    border-color: #007aff;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+#search-input::placeholder {
+    color: #999;
+}
+
+.clear-button {
+    position: absolute;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.clear-button:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.clear-button.visible {
+    display: flex;
+}
+
+/* フィルタータグ */
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    min-height: 0;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #007aff;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.filter-tag:hover {
+    background: #0051d5;
+}
+
+.filter-tag .remove {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* 検索結果なし */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.no-results h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.no-results p {
+    font-size: 14px;
+    color: #999;
+}
+
+/* 戻るボタン */
+.back-button {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+}
+
+.back-button:hover {
+    background: #0051d5;
+}
+
+/* 漫画グリッド */
+.manga-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 30px;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 漫画カード */
+.manga-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.manga-card:hover {
+    transform: translateY(-5px);
+}
+
+.manga-cover {
+    width: 100%;
+    aspect-ratio: 5/7;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #e0e0e0;
+}
+
+.manga-card:hover .manga-cover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.manga-info {
+    margin-top: 12px;
+}
+
+.manga-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.manga-meta {
+    font-size: 13px;
+    color: #666;
+}
+
+/* PDFリーダー */
+.reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.reader-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.control-divider {
+    width: 1px;
+    height: 24px;
+    background: #ddd;
+}
+
+.control-button {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.control-button:hover {
+    background: #0051d5;
+}
+
+.control-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.mode-button, .direction-button {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.mode-button:hover, .direction-button:hover {
+    background: #e0e0e0;
+}
+
+.mode-button.active, .direction-button.active {
+    background: #007aff;
+    color: white;
+}
+
+.blank-page-button {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.blank-page-button:hover {
+    background: #e0e0e0;
+}
+
+.blank-page-button.active {
+    background: #ff9500;
+    color: white;
+}
+
+#page-info, #zoom-level {
+    font-size: 14px;
+    color: #666;
+    min-width: 80px;
+    text-align: center;
+}
+
+#content-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    background: #2a2a2a;
+    min-height: calc(100vh - 120px);
+    overflow: auto;
+    gap: 4px;
+    position: relative;
+}
+
+/* クリック可能エリア */
+.page-turn-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.page-turn-area:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.page-turn-left {
+    left: 0;
+}
+
+.page-turn-right {
+    right: 0;
+}
+
+/* 右綴じモード（デフォルト） */
+#content-container.rtl {
+    flex-direction: row-reverse;
+}
+
+/* 左綴じモード */
+#content-container.ltr {
+    flex-direction: row;
+}
+
+/* 単ページモード */
+#content-container.single-page .content-canvas:first-of-type,
+#content-container.single-page .content-image:first-of-type {
+    display: block;
+}
+
+#content-container.single-page .content-canvas:last-of-type,
+#content-container.single-page .content-image:last-of-type {
+    display: none;
+}
+
+/* 見開きモード */
+#content-container.spread-page .content-canvas,
+#content-container.spread-page .content-image {
+    display: block;
+}
+
+/* 画像とPDF表示の共通スタイル */
+.content-canvas,
+.content-image {
+    background: white;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* プログレスバー */
+#progress-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 200;
+    backdrop-filter: blur(10px);
+}
+
+#progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+}
+
+#progress-fill {
+    position: absolute;
+    right: 0;  /* 右から開始 */
+    top: 0;
+    height: 100%;
+    background: linear-gradient(270deg, #007aff, #0051d5);  /* 右から左のグラデーション */
+    border-radius: 4px;
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+}
+
+#progress-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translate(50%, -50%);  /* 右基準に変更 */
+    right: 0;  /* leftからrightに変更 */
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 3px solid #007aff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: right 0.3s ease-out;  /* leftからrightに変更 */
+    cursor: grab;
+}
+
+#progress-indicator:active {
+    cursor: grabbing;
+}
+
+#progress-text {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 100px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ローディング */
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 18px;
+    color: #666;
+}
+
+.loading::after {
+    content: '...';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* エラーメッセージ */
+.error {
+    text-align: center;
+    padding: 60px 20px;
+    color: #ff3b30;
+    font-size: 16px;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .manga-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    header {
+        padding: 15px 20px;
+    }
+    
+    header h1 {
+        font-size: 24px;
+    }
+    
+    .search-container {
+        padding: 20px;
+    }
+    
+    #search-input {
+        padding: 14px 45px 14px 16px;
+        font-size: 14px;
+    }
+    
+    .reader-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .reader-controls {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .control-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .control-divider {
+        display: none;
+    }
+    
+    #progress-bar-container {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    #progress-text {
+        font-size: 12px;
+        min-width: 80px;
+    }
+}
+
+/* ========== 新機能追加スタイル ========== */
+
+/* ヘッダーの調整 */
+.header-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-content h1 {
+  flex: 1;
+  text-align: center;
+}
+
+/* お気に入りリンクボタン */
+.fav-link-button {
+  display: inline-block;
+  background: #ff3b30;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.fav-link-button:hover {
+  background: #e0281e;
+}
+
+/* 最近開いた漫画セクション */
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1d1d1f;
+  grid-column: 1 / -1;
+}
+
+.section-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 20px 0;
+}
+
+/* お気に入りボタン */
+.card-image-wrapper {
+  position: relative;
+}
+
+.fav-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.fav-button:hover {
+  transform: scale(1.1);
+  background: white;
+}
+
+.fav-button.active {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .fav-link-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+  }
+  
+  .fav-button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}
+
+/* お気に入りページのヘッダー調整 */
+#fav-view .header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#fav-view .header-content h1 {
+  margin: 0;
+}
+
+#fav-view .back-button {
+  margin-bottom: 0;
+}
+
+/* 全画面表示モード */
+#reader-view.fullscreen-mode {
+  background: #000;
+}
+
+#reader-view.fullscreen-mode header {
+  display: none;
+}
+
+#reader-view.fullscreen-mode #progress-bar-container {
+  display: none;
+}
+
+#reader-view.fullscreen-mode #content-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 全画面モードでのナビゲーション */
+#reader-view.fullscreen-mode #content-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 100;
+}
+
+#reader-view.fullscreen-mode #content-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* 全画面モード時の画像/キャンバス */
+#reader-view.fullscreen-mode .content-canvas,
+#reader-view.fullscreen-mode .content-image {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 全画面モード - 見開き表示 */
+#reader-view.fullscreen-mode #content-container.spread-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+/* 全画面モード - RTL（右綴じ）*/
+#reader-view.fullscreen-mode #content-container.spread-page.rtl {
+  flex-direction: row-reverse;
+}
+
+/* 全画面モード - LTR（左綴じ）*/
+#reader-view.fullscreen-mode #content-container.spread-page.ltr {
+  flex-direction: row;
+}
+
+#reader-view.fullscreen-mode #content-container.spread-page .content-canvas,
+#reader-view.fullscreen-mode #content-container.spread-page .content-image {
+  max-width: 50vw;
+  max-height: 100vh;
+}
+
+/* 全画面モード - 単ページ表示 */
+#reader-view.fullscreen-mode #content-container.single-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#reader-view.fullscreen-mode #content-container.single-page .content-canvas,
+#reader-view.fullscreen-mode #content-container.single-page .content-image {
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* リーダー画面のヘッダー自動非表示 */
+#reader-view header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+#reader-view header.show-header {
+  transform: translateY(0);
+}
+
+/* プログレスバーも自動非表示 */
+#progress-bar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+#progress-bar-container.show-controls {
+  transform: translateY(0);
+}
+
+/* 全画面モード時は既存の非表示ルールを維持 */
+#reader-view.fullscreen-mode header {
+  display: none;
+  transform: none;
+}
+
+#reader-view.fullscreen-mode #progress-bar-container {
+  display: none;
+  transform: none;
+}
+
+/* ===== スケルトンローディング ===== */
+.skeleton-card { pointer-events: none; }
+
+.skeleton-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 14px;
+  border-radius: 3px;
+  margin: 6px 0;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-title { width: 80%; }
+.skeleton-meta  { width: 50%; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* カバー画像のフェードイン */
+.manga-cover {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+/* ===== ライブラリ更新ボタン ===== */
+.refresh-button {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.refresh-button:hover {
+  background: rgba(255,255,255,0.15);
+}
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,5 @@
+node_modules/ 
+.env 
+users.db 
+manga_data/ 
+library_cache.json
