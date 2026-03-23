@@ -896,3 +896,20 @@ app.listen(PORT, () => {
   console.log("\nログインが必要です。アカウントがない場合:");
   console.log("  node setup-user.js\n");
 });
+
+// 環境変数から初期ユーザーを自動作成（Render初回デプロイ用）
+(function createInitialUser() {
+  const username = process.env.INIT_USERNAME;
+  const password = process.env.INIT_PASSWORD;
+  if (!username || !password) return;
+
+  const existing = stmtFindUser.get(username);
+  if (existing) {
+    console.log(`✅  初期ユーザー "${username}" は既に存在します`);
+    return;
+  }
+
+  const hash = bcrypt.hashSync(password, 12);
+  stmtInsertUser.run(username, hash);
+  console.log(`✅  初期ユーザー "${username}" を自動作成しました`);
+})();
