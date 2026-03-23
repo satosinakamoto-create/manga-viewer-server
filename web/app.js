@@ -15,8 +15,8 @@ let fitToWidth = true;
 let hasBlankPage = false; // 白紙を挿入しているか
 
 // お気に入りと履歴
-let favoritesList = JSON.parse(localStorage.getItem('favorites') || '[]');
-let recentlyOpened = JSON.parse(localStorage.getItem('recentlyOpened') || '[]');
+let favoritesList = JSON.parse(localStorage.getItem("favorites") || "[]");
+let recentlyOpened = JSON.parse(localStorage.getItem("recentlyOpened") || "[]");
 
 // 検索関連
 let allLibraryData = []; // 全ライブラリデータ
@@ -49,7 +49,7 @@ function toggleFavorite(title, volumeInfo) {
   } else {
     favoritesList.push(itemKey);
   }
-  localStorage.setItem('favorites', JSON.stringify(favoritesList));
+  localStorage.setItem("favorites", JSON.stringify(favoritesList));
 }
 
 // お気に入りチェック（巻単位）
@@ -61,21 +61,21 @@ function isFavorite(title, volumeInfo) {
 // 最近開いた漫画に追加
 function addToRecentlyOpened(title, volumeInfo) {
   // 既存のエントリを削除
-  recentlyOpened = recentlyOpened.filter(item => 
-    !(item.title === title && item.volume === volumeInfo)
+  recentlyOpened = recentlyOpened.filter(
+    (item) => !(item.title === title && item.volume === volumeInfo),
   );
-  
+
   // 先頭に追加
   recentlyOpened.unshift({
     title: title,
     volume: volumeInfo,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
-  
+
   // 最大10件に制限
   recentlyOpened = recentlyOpened.slice(0, 10);
-  
-  localStorage.setItem('recentlyOpened', JSON.stringify(recentlyOpened));
+
+  localStorage.setItem("recentlyOpened", JSON.stringify(recentlyOpened));
 }
 
 // イベントリスナー
@@ -127,12 +127,12 @@ const searchInput = document.getElementById("search-input");
 const clearButton = document.getElementById("clear-search");
 
 // お気に入りボタン（スクロール位置を保存してから遷移）
-document.addEventListener('DOMContentLoaded', () => {
-  const favLinkButton = document.getElementById('fav-link-button');
+document.addEventListener("DOMContentLoaded", () => {
+  const favLinkButton = document.getElementById("fav-link-button");
   if (favLinkButton) {
-    favLinkButton.addEventListener('click', (e) => {
+    favLinkButton.addEventListener("click", (e) => {
       // スクロール位置を保存
-      sessionStorage.setItem('libraryScrollY', window.scrollY.toString());
+      sessionStorage.setItem("libraryScrollY", window.scrollY.toString());
       // 通常のリンク遷移を継続（replaceは使わない）
     });
   }
@@ -234,7 +234,7 @@ async function showLibrary() {
   }
 
   // スクロール位置を復元（描画完了後に1回だけ）
-  const savedScrollY = sessionStorage.getItem('libraryScrollY');
+  const savedScrollY = sessionStorage.getItem("libraryScrollY");
   if (savedScrollY) {
     setTimeout(() => window.scrollTo(0, parseInt(savedScrollY)), 50);
   }
@@ -255,12 +255,12 @@ async function showVolumes() {
     switchView("volumes");
     // 巻一覧の履歴エントリを追加（戻るボタン対応）
     window.history.pushState(
-      { view: 'volumes', title: currentSeries },
-      '',
-      window.location.pathname
+      { view: "volumes", title: currentSeries },
+      "",
+      window.location.pathname,
     );
     await loadVolumes(currentSeries);
-    const savedScrollY = sessionStorage.getItem('volumesScrollY');
+    const savedScrollY = sessionStorage.getItem("volumesScrollY");
     if (savedScrollY) {
       setTimeout(() => window.scrollTo(0, parseInt(savedScrollY)), 100);
     }
@@ -401,24 +401,27 @@ function toggleFitWidth() {
 function toggleFullscreen() {
   const readerView = document.getElementById("reader-view");
   const button = document.getElementById("fullscreen-toggle");
-  
+
   if (!button) {
     return;
   }
-  
+
   if (!document.fullscreenElement) {
     // 全画面表示を開始
-    readerView.requestFullscreen().then(() => {
-      button.textContent = "終了";
-      button.classList.add("active");
-      readerView.classList.add("fullscreen-mode");
-      // 全画面モードで再描画
-      setTimeout(() => {
-        renderCurrentPages();
-      }, 100);
-    }).catch(err => {
-      alert("全画面表示に失敗しました");
-    });
+    readerView
+      .requestFullscreen()
+      .then(() => {
+        button.textContent = "終了";
+        button.classList.add("active");
+        readerView.classList.add("fullscreen-mode");
+        // 全画面モードで再描画
+        setTimeout(() => {
+          renderCurrentPages();
+        }, 100);
+      })
+      .catch((err) => {
+        alert("全画面表示に失敗しました");
+      });
   } else {
     // 全画面表示を終了
     document.exitFullscreen().then(() => {
@@ -434,10 +437,10 @@ function toggleFullscreen() {
 }
 
 // 全画面状態の変更を監視
-document.addEventListener('fullscreenchange', () => {
+document.addEventListener("fullscreenchange", () => {
   const button = document.getElementById("fullscreen-toggle");
   const readerView = document.getElementById("reader-view");
-  
+
   if (!document.fullscreenElement) {
     // 全画面が終了された（ESCキーなどで）
     if (button) {
@@ -445,7 +448,7 @@ document.addEventListener('fullscreenchange', () => {
       button.classList.remove("active");
     }
     readerView.classList.remove("fullscreen-mode");
-    
+
     // 通常モードで再描画
     setTimeout(() => {
       renderCurrentPages();
@@ -454,14 +457,14 @@ document.addEventListener('fullscreenchange', () => {
 });
 
 // 全画面モードでのクリックナビゲーション
-contentContainer.addEventListener('click', (e) => {
+contentContainer.addEventListener("click", (e) => {
   // 全画面モード時のみ
   if (!document.fullscreenElement) return;
-  
+
   const rect = contentContainer.getBoundingClientRect();
   const clickX = e.clientX - rect.left;
   const containerWidth = rect.width;
-  
+
   // 左側30%をクリック
   if (clickX < containerWidth * 0.3) {
     if (readingDirection === "rtl") {
@@ -489,7 +492,7 @@ function activateLazyCovers() {}
 // 同じURLだとブラウザが古いキャッシュを使い続けるため、起動ごとに変わるtを付ける
 const COVER_CACHE_BUSTER = Date.now();
 function coverUrl(url) {
-  return url + '?t=' + COVER_CACHE_BUSTER;
+  return url + "?t=" + COVER_CACHE_BUSTER;
 }
 
 // ===== ライブラリデータを読み込み =====
@@ -503,14 +506,16 @@ async function loadLibrary() {
     const response = await fetch("/api/library");
 
     if (!response.ok) {
-      libraryGrid.innerHTML = '<div class="error">ライブラリの読み込みに失敗しました</div>';
+      libraryGrid.innerHTML =
+        '<div class="error">ライブラリの読み込みに失敗しました</div>';
       return;
     }
 
     const library = await response.json();
 
     if (library.length === 0) {
-      libraryGrid.innerHTML = '<div class="error">漫画データが見つかりません</div>';
+      libraryGrid.innerHTML =
+        '<div class="error">漫画データが見つかりません</div>';
       return;
     }
 
@@ -519,16 +524,17 @@ async function loadLibrary() {
     // 描画後に遅延読み込みを起動
     activateLazyCovers(24);
   } catch (error) {
-    libraryGrid.innerHTML = '<div class="error">ライブラリの読み込みに失敗しました</div>';
+    libraryGrid.innerHTML =
+      '<div class="error">ライブラリの読み込みに失敗しました</div>';
   }
 }
 
 // スケルトンカード（プレースホルダー）を即時表示する
 function showLibrarySkeleton(count = 24) {
-  libraryGrid.innerHTML = '';
+  libraryGrid.innerHTML = "";
   for (let i = 0; i < count; i++) {
-    const skeleton = document.createElement('div');
-    skeleton.className = 'manga-card skeleton-card';
+    const skeleton = document.createElement("div");
+    skeleton.className = "manga-card skeleton-card";
     skeleton.innerHTML = `
       <div class="skeleton-cover"></div>
       <div class="manga-info">
@@ -556,40 +562,40 @@ function renderLibrary(library) {
 
   // 最近開いた漫画セクション（検索中は非表示）- 巻単位で表示
   if (recentlyOpened.length > 0 && !currentSearchTerm) {
-    const recentTitle = document.createElement('h2');
-    recentTitle.className = 'section-title';
-    recentTitle.textContent = '📖 最近開いた漫画';
-    recentTitle.style.gridColumn = '1 / -1';
+    const recentTitle = document.createElement("h2");
+    recentTitle.className = "section-title";
+    recentTitle.textContent = "📖 最近開いた漫画";
+    recentTitle.style.gridColumn = "1 / -1";
     libraryGrid.appendChild(recentTitle);
-    
+
     // 最近開いた漫画のカードを作成（巻単位）
     // 存在する作品のみを表示
     const validRecents = [];
-    
-    recentlyOpened.slice(0, 5).forEach(recent => {
+
+    recentlyOpened.slice(0, 5).forEach((recent) => {
       // タイトルが空でないかチェック
       if (!recent.title || !recent.volume) {
         return;
       }
-      
+
       // ライブラリに存在する作品かチェック
-      const manga = library.find(m => m.title === recent.title);
+      const manga = library.find((m) => m.title === recent.title);
       if (!manga) {
         return; // この作品はスキップ
       }
-      
+
       validRecents.push(recent);
-      
+
       const card = document.createElement("div");
       card.className = "manga-card";
-      
+
       const isFav = isFavorite(recent.title, recent.volume);
-      
+
       card.innerHTML = `
         <div class="card-image-wrapper">
-          <img src="${coverUrl('/api/cover/' + encodeURIComponent(recent.title))}" alt="${recent.title}" class="manga-cover" loading="lazy">
-          <button class="fav-button ${isFav ? 'active' : ''}" data-title="${recent.title}" data-volume="${recent.volume}">
-            ${isFav ? '❤️' : '🤍'}
+          <img src="${coverUrl("/api/cover/" + encodeURIComponent(recent.title))}" alt="${recent.title}" class="manga-cover" loading="lazy">
+          <button class="fav-button ${isFav ? "active" : ""}" data-title="${recent.title}" data-volume="${recent.volume}">
+            ${isFav ? "❤️" : "🤍"}
           </button>
         </div>
         <div class="manga-info">
@@ -597,70 +603,73 @@ function renderLibrary(library) {
           <div class="manga-meta">${recent.volume}</div>
         </div>
       `;
-      
+
       // お気に入りボタンのイベント
-      const favButton = card.querySelector('.fav-button');
-      favButton.addEventListener('click', (e) => {
+      const favButton = card.querySelector(".fav-button");
+      favButton.addEventListener("click", (e) => {
         e.stopPropagation();
         toggleFavorite(recent.title, recent.volume);
         const newIsFav = isFavorite(recent.title, recent.volume);
-        favButton.classList.toggle('active', newIsFav);
-        favButton.textContent = newIsFav ? '❤️' : '🤍';
+        favButton.classList.toggle("active", newIsFav);
+        favButton.textContent = newIsFav ? "❤️" : "🤍";
       });
-      
+
       // カードクリックで直接リーダーを開く
       card.addEventListener("click", async () => {
         // ライブラリのスクロール位置を保存
         const scrollY = window.scrollY;
-        sessionStorage.setItem('libraryScrollY', scrollY.toString());
+        sessionStorage.setItem("libraryScrollY", scrollY.toString());
         try {
           currentSeries = recent.title;
-          const response = await fetch(`/api/volumes?title=${encodeURIComponent(recent.title)}`);
-          
+          const response = await fetch(
+            `/api/volumes?title=${encodeURIComponent(recent.title)}`,
+          );
+
           if (!response.ok) {
-            alert('この作品は削除されたか、見つかりません');
+            alert("この作品は削除されたか、見つかりません");
             return;
           }
-          
+
           const volumes = await response.json();
-          
+
           // 該当する巻を探して開く
-          const targetVolume = volumes.find(v => 
-            (v.volume && v.volume === recent.volume) || 
-            (v.folder_name && v.folder_name === recent.volume)
+          const targetVolume = volumes.find(
+            (v) =>
+              (v.volume && v.volume === recent.volume) ||
+              (v.folder_name && v.folder_name === recent.volume),
           );
-          
+
           if (targetVolume) {
             openReader(recent.title, targetVolume);
           } else {
-            alert('この巻は削除されたか、見つかりません');
+            alert("この巻は削除されたか、見つかりません");
           }
         } catch (error) {
-          alert('漫画を開けませんでした');
+          alert("漫画を開けませんでした");
         }
       });
-      
+
       libraryGrid.appendChild(card);
     });
-    
+
     // 存在しない作品を最近開いた漫画から削除
     if (validRecents.length < recentlyOpened.slice(0, 5).length) {
-      recentlyOpened = recentlyOpened.filter(recent => 
-        library.some(m => m.title === recent.title)
+      recentlyOpened = recentlyOpened.filter((recent) =>
+        library.some((m) => m.title === recent.title),
       );
-      localStorage.setItem('recentlyOpened', JSON.stringify(recentlyOpened));
+      localStorage.setItem("recentlyOpened", JSON.stringify(recentlyOpened));
     }
-    
+
     // 区切り線
-    const divider = document.createElement('div');
-    divider.className = 'section-divider';
+    const divider = document.createElement("div");
+    divider.className = "section-divider";
     libraryGrid.appendChild(divider);
-    
+
     // 全作品タイトル
-    const allTitle = document.createElement('h2');
-    allTitle.className = 'section-title';
-    allTitle.textContent = '📚 全作品';
-    allTitle.style.gridColumn = '1 / -1';
+    const allTitle = document.createElement("h2");
+    allTitle.className = "section-title";
+    allTitle.textContent = "📚 全作品";
+    allTitle.style.gridColumn = "1 / -1";
     libraryGrid.appendChild(allTitle);
   }
 
@@ -671,15 +680,15 @@ function renderLibrary(library) {
 
     const metadata = manga.metadata || {};
     const volumeCount = manga.volume_count || 0;
-    
+
     // 作品全体のお気に入り状態をチェック（作品名のみで）
     const isFav = isFavorite(manga.title, null);
 
     card.innerHTML = `
       <div class="card-image-wrapper">
         <img src="${coverUrl(manga.cover)}" alt="${manga.title}" class="manga-cover" loading="lazy">
-        <button class="fav-button ${isFav ? 'active' : ''}" data-title="${manga.title}" data-volume="">
-          ${isFav ? '❤️' : '🤍'}
+        <button class="fav-button ${isFav ? "active" : ""}" data-title="${manga.title}" data-volume="">
+          ${isFav ? "❤️" : "🤍"}
         </button>
       </div>
       <div class="manga-info">
@@ -687,23 +696,23 @@ function renderLibrary(library) {
         <div class="manga-meta">${volumeCount}巻${metadata.author ? " / " + metadata.author : ""}</div>
       </div>
     `;
-    
+
     // お気に入りボタンのイベント
-    const favButton = card.querySelector('.fav-button');
-    favButton.addEventListener('click', (e) => {
+    const favButton = card.querySelector(".fav-button");
+    favButton.addEventListener("click", (e) => {
       e.stopPropagation();
-      toggleFavorite(manga.title, null);  // 作品全体のお気に入り
+      toggleFavorite(manga.title, null); // 作品全体のお気に入り
       const newIsFav = isFavorite(manga.title, null);
-      favButton.classList.toggle('active', newIsFav);
-      favButton.textContent = newIsFav ? '❤️' : '🤍';
+      favButton.classList.toggle("active", newIsFav);
+      favButton.textContent = newIsFav ? "❤️" : "🤍";
     });
 
     card.addEventListener("click", async () => {
       currentSeries = manga.title;
-      
+
       // ライブラリのスクロール位置を保存（すべてのケースで）
       const scrollY = window.scrollY;
-      sessionStorage.setItem('libraryScrollY', scrollY.toString());
+      sessionStorage.setItem("libraryScrollY", scrollY.toString());
       // manga_data直下のPDFの場合
       if (manga.is_direct_pdf) {
         const response = await fetch(
@@ -732,9 +741,9 @@ function renderLibrary(library) {
         currentSeries = manga.title;
         switchView("volumes");
         window.history.pushState(
-          { view: 'volumes', title: manga.title },
-          '',
-          window.location.pathname
+          { view: "volumes", title: manga.title },
+          "",
+          window.location.pathname,
         );
         loadVolumes(manga.title);
       }
@@ -742,7 +751,6 @@ function renderLibrary(library) {
     libraryGrid.appendChild(card);
   });
 }
-
 
 // 漫画カードを作成
 function createMangaCard(manga) {
@@ -777,9 +785,13 @@ function filterLibrary() {
   const filtered = allLibraryData.filter((manga) => {
     const metadata = manga.metadata || {};
     const titleMatch = manga.title.toLowerCase().includes(term);
-    const authorMatch = metadata.author && metadata.author.toLowerCase().includes(term);
-    const publisherMatch = metadata.publisher && metadata.publisher.toLowerCase().includes(term);
-    const genreMatch = metadata.genre && metadata.genre.some((g) => g.toLowerCase().includes(term));
+    const authorMatch =
+      metadata.author && metadata.author.toLowerCase().includes(term);
+    const publisherMatch =
+      metadata.publisher && metadata.publisher.toLowerCase().includes(term);
+    const genreMatch =
+      metadata.genre &&
+      metadata.genre.some((g) => g.toLowerCase().includes(term));
     return titleMatch || authorMatch || publisherMatch || genreMatch;
   });
 
@@ -796,7 +808,7 @@ async function loadVolumes(title) {
     const response = await fetch(
       `/api/volumes?title=${encodeURIComponent(title)}`,
     );
-    
+
     // 404エラーなど、レスポンスが正常でない場合
     if (!response.ok) {
       if (response.status === 404) {
@@ -810,7 +822,7 @@ async function loadVolumes(title) {
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const volumes = await response.json();
 
     if (volumes.length === 0) {
@@ -825,14 +837,14 @@ async function loadVolumes(title) {
       const card = createVolumeCard(volume, title);
       card.addEventListener("click", () => {
         // 巻一覧のスクロール位置を保存
-        sessionStorage.setItem('volumesScrollY', window.scrollY.toString());
+        sessionStorage.setItem("volumesScrollY", window.scrollY.toString());
         openReader(title, volume);
       });
       volumesGrid.appendChild(card);
     });
-    
+
     // スクロール位置を復元
-    const savedScrollY = sessionStorage.getItem('volumesScrollY');
+    const savedScrollY = sessionStorage.getItem("volumesScrollY");
     if (savedScrollY) {
       setTimeout(() => {
         window.scrollTo(0, parseInt(savedScrollY));
@@ -855,8 +867,8 @@ function createVolumeCard(volume, seriesTitle) {
   card.innerHTML = `
     <div class="card-image-wrapper">
       <img src="${coverUrl(volume.cover)}" alt="${volumeTitle}" class="manga-cover" loading="lazy">
-      <button class="fav-button ${isFav ? 'active' : ''}" data-title="${seriesTitle}" data-volume="${volumeTitle}">
-        ${isFav ? '❤️' : '🤍'}
+      <button class="fav-button ${isFav ? "active" : ""}" data-title="${seriesTitle}" data-volume="${volumeTitle}">
+        ${isFav ? "❤️" : "🤍"}
       </button>
     </div>
     <div class="manga-info">
@@ -865,14 +877,14 @@ function createVolumeCard(volume, seriesTitle) {
   `;
 
   // お気に入りボタンのイベント
-  const favButton = card.querySelector('.fav-button');
-  favButton.addEventListener('click', (e) => {
+  const favButton = card.querySelector(".fav-button");
+  favButton.addEventListener("click", (e) => {
     e.stopPropagation();
     toggleFavorite(seriesTitle, volumeTitle);
     // ボタンの表示を更新
     const newIsFav = isFavorite(seriesTitle, volumeTitle);
-    favButton.classList.toggle('active', newIsFav);
-    favButton.textContent = newIsFav ? '❤️' : '🤍';
+    favButton.classList.toggle("active", newIsFav);
+    favButton.textContent = newIsFav ? "❤️" : "🤍";
   });
 
   return card;
@@ -881,18 +893,22 @@ function createVolumeCard(volume, seriesTitle) {
 // リーダーを開く
 async function openReader(title, volume) {
   // 前のビューを記録（戻るボタン用）
-  sessionStorage.setItem('previousView', currentView);
-  const cameFromFavorites = sessionStorage.getItem('cameFromFavorites');
-  if (cameFromFavorites !== 'true') {
-    sessionStorage.removeItem('cameFromFavorites');
+  sessionStorage.setItem("previousView", currentView);
+  const cameFromFavorites = sessionStorage.getItem("cameFromFavorites");
+  if (cameFromFavorites !== "true") {
+    sessionStorage.removeItem("cameFromFavorites");
   }
 
   switchView("reader");
 
   window.history.pushState(
-    { view: 'reader', title: title, volume: volume.volume || volume.folder_name },
-    '',
-    window.location.pathname
+    {
+      view: "reader",
+      title: title,
+      volume: volume.volume || volume.folder_name,
+    },
+    "",
+    window.location.pathname,
   );
   addToRecentlyOpened(title, volume.volume || volume.folder_name);
 
@@ -934,13 +950,16 @@ async function openReader(title, volume) {
 
 // PDFを読み込み
 async function loadPDF(pdfUrl) {
-  // pdf.jsが読み込めていない場合
-  if (typeof pdfjsLib === 'undefined') {
+  if (typeof pdfjsLib === "undefined") {
     showPdfJsError();
     return;
   }
   try {
-    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+    const loadingTask = pdfjsLib.getDocument({
+      url: pdfUrl,
+      cMapUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/",
+      cMapPacked: true,
+    });
     pdfDoc = await loadingTask.promise;
     totalPages = pdfDoc.numPages;
 
@@ -949,7 +968,9 @@ async function loadPDF(pdfUrl) {
     pdfCanvasLeft.style.display = "block";
     pdfCanvasRight.style.display = "block";
   } catch (error) {
-    showPdfError("PDFの読み込みに失敗しました。ファイルが壊れているか、見つかりません。");
+    showPdfError(
+      "PDFの読み込みに失敗しました。ファイルが壊れているか、見つかりません。",
+    );
   }
 }
 
@@ -1063,19 +1084,21 @@ async function renderPDFPage(canvas, pageNum) {
     if (fitToWidth) {
       const containerWidth = contentContainer.clientWidth;
       const pageWidth = page.getViewport({ scale: 1.0 }).width;
-      
+
       // 全画面モード時は画面サイズに合わせて計算
       const isFullscreen = document.fullscreenElement !== null;
       let availableWidth;
-      
+
       if (isFullscreen) {
         // 全画面モード時
-        availableWidth = viewMode === "spread" ? window.innerWidth / 2 : window.innerWidth;
+        availableWidth =
+          viewMode === "spread" ? window.innerWidth / 2 : window.innerWidth;
       } else {
         // 通常モード時
-        availableWidth = viewMode === "spread" ? containerWidth / 2 - 10 : containerWidth - 40;
+        availableWidth =
+          viewMode === "spread" ? containerWidth / 2 - 10 : containerWidth - 40;
       }
-      
+
       scale = availableWidth / pageWidth;
     }
 
@@ -1094,9 +1117,9 @@ async function renderPDFPage(canvas, pageNum) {
     // レンダリングタスクを保存
     const renderTask = page.render(renderContext);
     canvas.renderTask = renderTask;
-    
+
     await renderTask.promise;
-    
+
     // レンダリング完了後にタスクをクリア
     if (canvas.renderTask === renderTask) {
       canvas.renderTask = null;
@@ -1104,7 +1127,7 @@ async function renderPDFPage(canvas, pageNum) {
     page.cleanup();
   } catch (error) {
     // キャンセルエラーは無視
-    if (error.name !== 'RenderingCancelledException') {
+    if (error.name !== "RenderingCancelledException") {
     }
     canvas.renderTask = null;
   } finally {
@@ -1128,19 +1151,21 @@ function renderImagePage(img, pageNum) {
   // ズームとフィット設定を適用
   if (fitToWidth) {
     const containerWidth = contentContainer.clientWidth;
-    
+
     // 全画面モード時は画面サイズに合わせて計算
     const isFullscreen = document.fullscreenElement !== null;
     let availableWidth;
-    
+
     if (isFullscreen) {
       // 全画面モード時
-      availableWidth = viewMode === "spread" ? window.innerWidth / 2 : window.innerWidth;
+      availableWidth =
+        viewMode === "spread" ? window.innerWidth / 2 : window.innerWidth;
     } else {
       // 通常モード時
-      availableWidth = viewMode === "spread" ? containerWidth / 2 - 10 : containerWidth - 40;
+      availableWidth =
+        viewMode === "spread" ? containerWidth / 2 - 10 : containerWidth - 40;
     }
-    
+
     img.style.width = availableWidth + "px";
     img.style.height = "auto";
   } else {
@@ -1350,23 +1375,24 @@ function changeZoom(delta) {
 loadLibrary();
 
 // ===== ライブラリ更新ボタン =====
-const refreshButton = document.getElementById('refresh-library');
+const refreshButton = document.getElementById("refresh-library");
 if (refreshButton) {
-  refreshButton.addEventListener('click', async () => {
+  refreshButton.addEventListener("click", async () => {
     const confirmed = confirm(
-      '漫画フォルダを再スキャンします。\n' +
-      '作品数によっては数十秒かかる場合があります。\n\n' +
-      '続けますか？'
+      "漫画フォルダを再スキャンします。\n" +
+        "作品数によっては数十秒かかる場合があります。\n\n" +
+        "続けますか？",
     );
     if (!confirmed) return;
 
     refreshButton.disabled = true;
-    refreshButton.textContent = '🔄 スキャン中...';
-    libraryGrid.innerHTML = '<div class="loading">ライブラリを再スキャン中です。しばらくお待ちください...</div>';
+    refreshButton.textContent = "🔄 スキャン中...";
+    libraryGrid.innerHTML =
+      '<div class="loading">ライブラリを再スキャン中です。しばらくお待ちください...</div>';
 
     try {
       // refresh APIがスキャン完了まで待機して新データを返す
-      const response = await fetch('/api/library/refresh');
+      const response = await fetch("/api/library/refresh");
       const library = await response.json();
 
       // 取得したデータで直接描画（loadLibraryのキャッシュを使わない）
@@ -1374,75 +1400,78 @@ if (refreshButton) {
       renderLibrary(library);
       activateLazyCovers(24);
     } catch (e) {
-      libraryGrid.innerHTML = '<div class="error">更新に失敗しました。サーバーを確認してください。</div>';
+      libraryGrid.innerHTML =
+        '<div class="error">更新に失敗しました。サーバーを確認してください。</div>';
     } finally {
       refreshButton.disabled = false;
-      refreshButton.textContent = '🔄 ライブラリ更新';
+      refreshButton.textContent = "🔄 ライブラリ更新";
     }
   });
 }
 
-
 // URLパラメータから作品・巻を開く
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const openTitle = urlParams.get('open');
-  const openVolume = urlParams.get('volume');
-  const seriesTitle = urlParams.get('series');
-  
+  const openTitle = urlParams.get("open");
+  const openVolume = urlParams.get("volume");
+  const seriesTitle = urlParams.get("series");
+
   if (openTitle && openVolume) {
     // 特定の巻を直接開く（お気に入りから）
     try {
       await loadLibrary();
-      
+
       // URLパラメータをクリア（openReaderを呼ぶ前に！）
       window.history.replaceState({}, document.title, window.location.pathname);
       currentSeries = openTitle;
-      const response = await fetch(`/api/volumes?title=${encodeURIComponent(openTitle)}`);
-      
+      const response = await fetch(
+        `/api/volumes?title=${encodeURIComponent(openTitle)}`,
+      );
+
       // 404エラーなど、レスポンスが正常でない場合
       if (!response.ok) {
         if (response.status === 404) {
-          alert('作品が見つかりません。削除された可能性があります。');
+          alert("作品が見つかりません。削除された可能性があります。");
           // ライブラリに戻る
-          switchView('library');
+          switchView("library");
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const volumes = await response.json();
-      
-      const targetVolume = volumes.find(v => 
-        (v.volume && v.volume === openVolume) || 
-        (v.folder_name && v.folder_name === openVolume)
+
+      const targetVolume = volumes.find(
+        (v) =>
+          (v.volume && v.volume === openVolume) ||
+          (v.folder_name && v.folder_name === openVolume),
       );
-      
+
       if (targetVolume) {
         // openReaderがpushStateを実行する
         openReader(openTitle, targetVolume);
       } else {
-        alert('巻が見つかりません。削除された可能性があります。');
-        switchView('library');
+        alert("巻が見つかりません。削除された可能性があります。");
+        switchView("library");
       }
     } catch (error) {
-      alert('漫画の読み込みに失敗しました。');
-      switchView('library');
+      alert("漫画の読み込みに失敗しました。");
+      switchView("library");
     }
   } else if (seriesTitle) {
     // 作品の巻一覧を開く（作品全体のお気に入りから）
     await loadLibrary();
-    
+
     currentSeries = seriesTitle;
-    switchView('volumes');
+    switchView("volumes");
     await loadVolumes(seriesTitle);
-    
+
     // URLパラメータをクリア（履歴は置き換えるだけ）
     window.history.replaceState({}, document.title, window.location.pathname);
   } else {
     // 通常のライブラリ表示（fav.htmlから戻った時など）
     // スクロール位置を復元
-    const savedScrollY = sessionStorage.getItem('libraryScrollY');
+    const savedScrollY = sessionStorage.getItem("libraryScrollY");
     if (savedScrollY) {
       setTimeout(() => {
         window.scrollTo(0, parseInt(savedScrollY));
@@ -1452,116 +1481,115 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ブラウザの戻る/進むボタンで適切なビューに戻る
-window.addEventListener('popstate', (event) => {
-  if (currentView === 'reader') {
+window.addEventListener("popstate", (event) => {
+  if (currentView === "reader") {
     // リーダー → お気に入りから来た場合
-    const cameFromFavorites = sessionStorage.getItem('cameFromFavorites');
-    if (cameFromFavorites === 'true') {
-      sessionStorage.removeItem('cameFromFavorites');
-      const favScrollY = sessionStorage.getItem('favoritesScrollY');
+    const cameFromFavorites = sessionStorage.getItem("cameFromFavorites");
+    if (cameFromFavorites === "true") {
+      sessionStorage.removeItem("cameFromFavorites");
+      const favScrollY = sessionStorage.getItem("favoritesScrollY");
       if (favScrollY) {
-        sessionStorage.setItem('restoreFavoritesScroll', favScrollY);
+        sessionStorage.setItem("restoreFavoritesScroll", favScrollY);
       }
-      window.location.href = 'fav.html';
+      window.location.href = "fav.html";
       return;
     }
 
     // リーダー → 巻一覧 or ライブラリ
-    const previousView = sessionStorage.getItem('previousView');
-    if (previousView === 'volumes') {
+    const previousView = sessionStorage.getItem("previousView");
+    if (previousView === "volumes") {
       // 巻一覧に戻る（さらに戻るボタンでライブラリへ行けるようpushStateしない）
       switchView("volumes");
       loadVolumes(currentSeries);
-      const savedScrollY = sessionStorage.getItem('volumesScrollY');
+      const savedScrollY = sessionStorage.getItem("volumesScrollY");
       if (savedScrollY) {
         setTimeout(() => window.scrollTo(0, parseInt(savedScrollY)), 100);
       }
     } else {
       showLibrary();
     }
-
-  } else if (currentView === 'volumes') {
+  } else if (currentView === "volumes") {
     // 巻一覧 → ライブラリ
     showLibrary();
   }
 });
 
 // ページ離脱時にスクロール位置を保存
-window.addEventListener('beforeunload', () => {
-  if (currentView === 'library') {
-    sessionStorage.setItem('libraryScrollY', window.scrollY.toString());
+window.addEventListener("beforeunload", () => {
+  if (currentView === "library") {
+    sessionStorage.setItem("libraryScrollY", window.scrollY.toString());
   }
 });
 
 // リーダー画面のヘッダー/コントロール自動非表示
-(function() {
-  const readerView = document.getElementById('reader-view');
-  const header = readerView.querySelector('header');
-  const progressBar = document.getElementById('progress-bar-container');
+(function () {
+  const readerView = document.getElementById("reader-view");
+  const header = readerView.querySelector("header");
+  const progressBar = document.getElementById("progress-bar-container");
   let hideTimer = null;
-  
+
   // ヘッダーとプログレスバーを表示
   function showControls() {
-    header.classList.add('show-header');
-    progressBar.classList.add('show-controls');
-    
+    header.classList.add("show-header");
+    progressBar.classList.add("show-controls");
+
     // 既存のタイマーをクリア
     if (hideTimer) {
       clearTimeout(hideTimer);
     }
-    
+
     // 1.5秒後に自動非表示
     hideTimer = setTimeout(() => {
-      header.classList.remove('show-header');
-      progressBar.classList.remove('show-controls');
+      header.classList.remove("show-header");
+      progressBar.classList.remove("show-controls");
     }, 1500);
   }
-  
+
   // グローバルに公開（openReaderから呼ぶため）
   window.showReaderControls = showControls;
-  
+
   // ヘッダーとプログレスバーを即座に非表示
   function hideControls() {
-    header.classList.remove('show-header');
-    progressBar.classList.remove('show-controls');
+    header.classList.remove("show-header");
+    progressBar.classList.remove("show-controls");
     if (hideTimer) {
       clearTimeout(hideTimer);
       hideTimer = null;
     }
   }
-  
+
   // コントロールの表示状態をトグル
   function toggleControls() {
-    const isVisible = header.classList.contains('show-header');
+    const isVisible = header.classList.contains("show-header");
     if (isVisible) {
       hideControls();
     } else {
       showControls();
     }
   }
-  
+
   // マウス移動でコントロールを表示
-  readerView.addEventListener('mousemove', (e) => {
+  readerView.addEventListener("mousemove", (e) => {
     // リーダー画面でない場合は何もしない
-    if (currentView !== 'reader') return;
-    
+    if (currentView !== "reader") return;
+
     const viewportHeight = window.innerHeight;
     const mouseY = e.clientY;
-    
+
     // 上部20%または下部20%にマウスがある場合
     if (mouseY < viewportHeight * 0.2 || mouseY > viewportHeight * 0.8) {
       showControls();
     }
   });
-  
+
   // content-containerの中央（ノド辺り）をクリックでトグル
-  contentContainer.addEventListener('click', (e) => {
-    if (currentView !== 'reader') return;
-    
+  contentContainer.addEventListener("click", (e) => {
+    if (currentView !== "reader") return;
+
     const rect = contentContainer.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const containerWidth = rect.width;
-    
+
     // 中央40%（30%-70%）をクリックした場合のみトグル
     const clickRatio = clickX / containerWidth;
     if (clickRatio >= 0.3 && clickRatio <= 0.7) {
@@ -1569,45 +1597,45 @@ window.addEventListener('beforeunload', () => {
       e.stopPropagation(); // ページめくりを防止
     }
   });
-  
+
   // マウスがヘッダーまたはプログレスバー上にある間は非表示にしない
-  header.addEventListener('mouseenter', () => {
+  header.addEventListener("mouseenter", () => {
     if (hideTimer) {
       clearTimeout(hideTimer);
       hideTimer = null;
     }
   });
-  
-  header.addEventListener('mouseleave', () => {
+
+  header.addEventListener("mouseleave", () => {
     hideTimer = setTimeout(() => {
-      header.classList.remove('show-header');
-      progressBar.classList.remove('show-controls');
+      header.classList.remove("show-header");
+      progressBar.classList.remove("show-controls");
     }, 1500);
   });
-  
-  progressBar.addEventListener('mouseenter', () => {
+
+  progressBar.addEventListener("mouseenter", () => {
     if (hideTimer) {
       clearTimeout(hideTimer);
       hideTimer = null;
     }
   });
-  
-  progressBar.addEventListener('mouseleave', () => {
+
+  progressBar.addEventListener("mouseleave", () => {
     hideTimer = setTimeout(() => {
-      header.classList.remove('show-header');
-      progressBar.classList.remove('show-controls');
+      header.classList.remove("show-header");
+      progressBar.classList.remove("show-controls");
     }, 1500);
   });
-  
+
   // ページ移動ボタンクリック時にコントロールを一時表示
-  document.getElementById('next-page').addEventListener('click', showControls);
-  document.getElementById('prev-page').addEventListener('click', showControls);
-  
+  document.getElementById("next-page").addEventListener("click", showControls);
+  document.getElementById("prev-page").addEventListener("click", showControls);
+
   // キーボード操作でページ移動してもコントロールは表示しない
   // （矢印キーでの表示処理を削除）
-  
+
   // リーダー画面に切り替わった時に一度表示
-  document.getElementById('back-to-library').addEventListener('click', () => {
+  document.getElementById("back-to-library").addEventListener("click", () => {
     // ライブラリに戻る時は何もしない
   });
 })();
