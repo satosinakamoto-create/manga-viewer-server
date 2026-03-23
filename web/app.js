@@ -503,7 +503,7 @@ async function loadLibrary() {
     // スケルトンを即表示（レスポンス待機中のフィードバック）
     showLibrarySkeleton();
 
-    const response = await fetch("/api/library");
+    const response = await authFetch("/api/library");
 
     if (!response.ok) {
       libraryGrid.innerHTML =
@@ -621,7 +621,7 @@ function renderLibrary(library) {
         sessionStorage.setItem("libraryScrollY", scrollY.toString());
         try {
           currentSeries = recent.title;
-          const response = await fetch(
+          const response = await authauthFetch(
             `/api/volumes?title=${encodeURIComponent(recent.title)}`,
           );
 
@@ -715,7 +715,7 @@ function renderLibrary(library) {
       sessionStorage.setItem("libraryScrollY", scrollY.toString());
       // manga_data直下のPDFの場合
       if (manga.is_direct_pdf) {
-        const response = await fetch(
+        const response = await authFetch(
           `/api/volumes?title=${encodeURIComponent(manga.title)}&is_direct_pdf=true`,
         );
         const volumes = await response.json();
@@ -728,7 +728,7 @@ function renderLibrary(library) {
 
       // タイトルフォルダ直下に画像がある場合は直接リーダーを開く
       if (manga.has_direct_images) {
-        const response = await fetch(
+        const response = await authFetch(
           `/api/volumes?title=${encodeURIComponent(manga.title)}`,
         );
         const volumes = await response.json();
@@ -805,7 +805,7 @@ async function loadVolumes(title) {
     volumesGrid.innerHTML = '<div class="loading">巻一覧を読み込み中</div>';
     seriesTitle.textContent = title;
 
-    const response = await fetch(
+    const response = await authFetch(
       `/api/volumes?title=${encodeURIComponent(title)}`,
     );
 
@@ -1000,7 +1000,7 @@ function showPdfError(msg) {
 // 画像リストを読み込み
 async function loadImages(title, folderName) {
   try {
-    const response = await fetch(
+    const response = await authFetch(
       `/api/images?title=${encodeURIComponent(title)}&folder=${encodeURIComponent(folderName)}`,
     );
     imageList = await response.json();
@@ -1392,7 +1392,7 @@ if (refreshButton) {
 
     try {
       // refresh APIがスキャン完了まで待機して新データを返す
-      const response = await fetch("/api/library/refresh");
+      const response = await authFetch("/api/library/refresh");
       const library = await response.json();
 
       // 取得したデータで直接描画（loadLibraryのキャッシュを使わない）
@@ -1424,7 +1424,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       // URLパラメータをクリア（openReaderを呼ぶ前に！）
       window.history.replaceState({}, document.title, window.location.pathname);
       currentSeries = openTitle;
-      const response = await fetch(
+      const response = await authFetch(
         `/api/volumes?title=${encodeURIComponent(openTitle)}`,
       );
 
