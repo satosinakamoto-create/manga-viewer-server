@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>漫画ライブラリ</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="auth.js"></script>
+  </head>
+  <body>
+    <!-- ライブラリビュー（タイトル一覧） -->
+    <div id="library-view" class="view active">
+      <header>
+        <div class="header-content">
+          <a href="fav.html" class="fav-link-button" id="fav-link-button"
+            >❤️ お気に入り</a
+          >
+          <h1>📚 漫画ライブラリ</h1>
+          <button
+            id="refresh-library"
+            class="refresh-button"
+            title="漫画を追加・削除した時にクリック"
+          >
+            🔄 ライブラリ更新
+          </button>
+        </div>
+      </header>
+
+      <!-- デモ注記 - 転職活動終了で削除予定 -->
+      <div class="demo-notice">
+        ⚠️ このデモは著作権切れの青空文庫作品を使用しています。<br />
+        実際の自炊漫画ビューワーは面接時にデモンストレーション可能です。
+      </div>
+
+      <!-- 検索・フィルターエリア -->
+      <div class="search-container">
+        <div class="search-box">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="作品名、作者、出版社、ジャンルで検索..."
+          />
+          <button id="clear-search" class="clear-button">✕</button>
+        </div>
+        <div class="filter-tags" id="filter-tags"></div>
+      </div>
+
+      <div id="library-grid" class="manga-grid">
+        <!-- JavaScriptで動的に生成 -->
+      </div>
+    </div>
+
+    <!-- 巻一覧ビュー -->
+    <div id="volumes-view" class="view">
+      <header>
+        <button id="back-to-library" class="back-button">
+          ← ライブラリに戻る
+        </button>
+        <h1 id="series-title"></h1>
+      </header>
+      <div id="volumes-grid" class="manga-grid">
+        <!-- JavaScriptで動的に生成 -->
+      </div>
+    </div>
+
+    <!-- リーダービュー -->
+    <div id="reader-view" class="view">
+      <header class="reader-header">
+        <button id="back-to-volumes" class="back-button">← 巻一覧に戻る</button>
+        <h2 id="reader-title"></h2>
+        <div class="reader-controls">
+          <button id="next-page" class="control-button">← 次</button>
+          <span id="page-info">1 / 1</span>
+          <button id="prev-page" class="control-button">前 →</button>
+
+          <div class="control-divider"></div>
+
+          <button id="view-mode-single" class="control-button mode-button">
+            単ページ
+          </button>
+          <button
+            id="view-mode-spread"
+            class="control-button mode-button active"
+          >
+            見開き
+          </button>
+
+          <div class="control-divider"></div>
+
+          <button
+            id="toggle-blank-page"
+            class="control-button blank-page-button"
+          >
+            白紙を挿入
+          </button>
+
+          <div class="control-divider"></div>
+
+          <button
+            id="reading-direction-rtl"
+            class="control-button direction-button active"
+          >
+            右綴じ →
+          </button>
+          <button
+            id="reading-direction-ltr"
+            class="control-button direction-button"
+          >
+            左綴じ ←
+          </button>
+
+          <div class="control-divider"></div>
+
+          <button id="zoom-out" class="control-button">-</button>
+          <span id="zoom-level">100%</span>
+          <button id="zoom-in" class="control-button">+</button>
+          <button id="fit-width" class="control-button active">
+            元のサイズ
+          </button>
+
+          <div class="control-divider"></div>
+
+          <button id="fullscreen-toggle" class="control-button">全画面</button>
+        </div>
+      </header>
+      <div id="content-container" class="spread-page rtl">
+        <!-- PDFモード用のキャンバス -->
+        <canvas id="pdf-canvas-left" class="content-canvas"></canvas>
+        <canvas id="pdf-canvas-right" class="content-canvas"></canvas>
+
+        <!-- 画像モード用のimg要素 -->
+        <img id="image-left" class="content-image" alt="" />
+        <img id="image-right" class="content-image" alt="" />
+      </div>
+      <div id="progress-bar-container">
+        <div id="progress-bar">
+          <div id="progress-fill"></div>
+          <div id="progress-indicator"></div>
+        </div>
+        <div id="progress-text">1 / 100</div>
+      </div>
+    </div>
+
+    <!-- PDF.js ライブラリ（ローカル） -->
+    <!-- server.py 起動時に web/lib/ へ自動ダウンロードされます -->
+    <script src="lib/pdf.min.js"></script>
+    <script>
+      if (typeof pdfjsLib !== "undefined") {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "lib/pdf.worker.min.js";
+      }
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>
