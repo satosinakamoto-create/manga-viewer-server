@@ -823,3 +823,18 @@ header h2 {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* デモ注記 - 転職活動終了で削除予定 */
+.demo-notice {
+  max-width: 800px;
+  margin: 20px auto 0;
+  padding: 16px 24px;
+  background: #fffbe6;
+  border: 2px solid #f5a623;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #333;
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 500;
+}
