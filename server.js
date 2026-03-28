@@ -78,6 +78,9 @@ const stmtInsertUser = db.prepare(
 
 const app = express();
 
+// Renderのリバースプロキシを信頼する（express-rate-limit用）
+app.set('trust proxy', 1);
+
 // ============================================================
 //  セキュリティ: Helmet.js (HTTPヘッダー強化)
 // ============================================================
