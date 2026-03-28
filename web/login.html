@@ -6,10 +6,15 @@
     <title>ログイン - 漫画ライブラリ</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background: #f5f5f7;
         min-height: 100vh;
         display: flex;
@@ -62,7 +67,9 @@
         border: 2px solid #e0e0e0;
         border-radius: 10px;
         outline: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
         background: #fafafa;
       }
 
@@ -82,12 +89,18 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.2s, transform 0.1s;
+        transition:
+          background 0.2s,
+          transform 0.1s;
         margin-top: 8px;
       }
 
-      .login-button:hover  { background: #0051d5; }
-      .login-button:active { transform: scale(0.98); }
+      .login-button:hover {
+        background: #0051d5;
+      }
+      .login-button:active {
+        transform: scale(0.98);
+      }
       .login-button:disabled {
         background: #ccc;
         cursor: not-allowed;
@@ -105,13 +118,15 @@
         margin-bottom: 16px;
       }
 
-      .error-message.show { display: block; }
+      .error-message.show {
+        display: block;
+      }
 
       .loading-spinner {
         display: inline-block;
         width: 16px;
         height: 16px;
-        border: 2px solid rgba(255,255,255,0.4);
+        border: 2px solid rgba(255, 255, 255, 0.4);
         border-top-color: white;
         border-radius: 50%;
         animation: spin 0.7s linear infinite;
@@ -120,7 +135,37 @@
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* デモアカウント表示 - 転職活動終了で削除予定 */
+      .demo-account {
+        margin-top: 20px;
+        padding: 14px 16px;
+        background: #f0f6ff;
+        border: 1px solid #cce0ff;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #444;
+        text-align: center;
+        line-height: 1.8;
+      }
+
+      .demo-account p:first-child {
+        font-weight: 600;
+        color: #007aff;
+        margin-bottom: 4px;
+      }
+
+      .demo-account code {
+        background: #e0edff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 13px;
+        color: #0051d5;
       }
     </style>
   </head>
@@ -158,28 +203,34 @@
       </div>
 
       <button class="login-button" id="login-btn">ログイン</button>
+
+      <!-- IDとPASSの表示_転職活動終了で削除予定 -->
+      <div class="demo-account">
+        <p>🔑 デモアカウント</p>
+        <p>ID: <code>demo</code> / Pass: <code>demo1234</code></p>
+      </div>
     </div>
 
     <script>
-      const usernameInput = document.getElementById('username');
-      const passwordInput = document.getElementById('password');
-      const loginBtn      = document.getElementById('login-btn');
-      const errorMsg      = document.getElementById('error-msg');
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const loginBtn = document.getElementById("login-btn");
+      const errorMsg = document.getElementById("error-msg");
 
       function showError(message) {
         errorMsg.textContent = message;
-        errorMsg.classList.add('show');
+        errorMsg.classList.add("show");
       }
 
       function clearError() {
-        errorMsg.classList.remove('show');
+        errorMsg.classList.remove("show");
       }
 
       function setLoading(loading) {
         loginBtn.disabled = loading;
         loginBtn.innerHTML = loading
           ? '<span class="loading-spinner"></span>ログイン中...'
-          : 'ログイン';
+          : "ログイン";
       }
 
       async function handleLogin() {
@@ -187,7 +238,7 @@
         const password = passwordInput.value;
 
         if (!username || !password) {
-          showError('ユーザー名とパスワードを入力してください');
+          showError("ユーザー名とパスワードを入力してください");
           return;
         }
 
@@ -195,9 +246,9 @@
         setLoading(true);
 
         try {
-          const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
           });
 
@@ -205,23 +256,23 @@
 
           if (res.ok && data.success) {
             // ログイン成功 → ライブラリへリダイレクト
-            window.location.href = '/';
+            window.location.href = "/";
           } else {
-            showError(data.error || 'ログインに失敗しました');
+            showError(data.error || "ログインに失敗しました");
             setLoading(false);
           }
         } catch {
-          showError('サーバーに接続できません。再度お試しください。');
+          showError("サーバーに接続できません。再度お試しください。");
           setLoading(false);
         }
       }
 
-      loginBtn.addEventListener('click', handleLogin);
+      loginBtn.addEventListener("click", handleLogin);
 
       // Enterキーでログイン
-      [usernameInput, passwordInput].forEach(el => {
-        el.addEventListener('keydown', e => {
-          if (e.key === 'Enter') handleLogin();
+      [usernameInput, passwordInput].forEach((el) => {
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") handleLogin();
         });
       });
     </script>
